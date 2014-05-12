@@ -1,0 +1,30 @@
+path {
+  stroke: lightgrey;
+  stroke-width: 1;
+  fill: none;
+}
+
+.hit {
+  stroke: black;
+  fill: blue;
+}
+
+.single {
+ fill: blue; 
+}
+
+.double {
+ fill: green; 
+}
+
+.triple {
+ fill: purple; 
+}
+
+.home-run {
+ fill: pink; 
+}
+
+.out {
+ fill: red; 
+}

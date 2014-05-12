@@ -7,9 +7,9 @@ import (
 
 func main() {
 	m := martini.Classic()
-    m.Use(render.Renderer(render.Options{
-        Layout: "layout",
-    }))
+	m.Use(render.Renderer(render.Options{
+		Layout: "layout",
+	}))
 
 	m.Get("/", func(r render.Render) {
 		r.HTML(200, "baseball", nil)
