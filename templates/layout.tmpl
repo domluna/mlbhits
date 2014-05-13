@@ -6,7 +6,23 @@
     <link href="css/main.css" rel="stylesheet">
   </head>
   <body>
-    {{ yield }}
+    <h2> Baseball Hits </h2>
+    <p class="info"></p>
+    <svg width="600" height="600"></svg>
+    <div class="options">
+        <div class="player-options">
+            Pitcher: <input name="pitcher"></input>
+            Hitter: <input name="hitter"></input>
+        </div>
+        <div class="hit-options">
+            <select>
+                <option value="description">By Description</option>
+                <option value="type">By Type</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Load the scripts -->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
     <script src="js/baseball.js"></script>

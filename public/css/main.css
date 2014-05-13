@@ -6,25 +6,17 @@ path {
 
 .hit {
   stroke: black;
-  fill: blue;
 }
 
-.single {
- fill: blue; 
+.legend-text {
+  font-size: 10px;  
 }
 
-.double {
- fill: green; 
+.player-options input {
 }
 
-.triple {
- fill: purple; 
+.hit-options {
+  
 }
 
-.home-run {
- fill: pink; 
-}
 
-.out {
- fill: red; 
-}

@@ -1,17 +1,32 @@
 (function(d3, JQuery) {
 
-  var svg = d3.select('body')
-    .append('svg')
-    .attr('width', 600)
-    .attr('height', 600);
+var svg = d3.select('svg');
 
-  // location of the bottom tip of the
-  // baseball field
-  var home = {
-    x: 300,
-    y: 500
-  };
+// baseball field
+var home = {
+  x: 300,
+  y: 500
+};
+var hitDescription = ['Single', 'Double', 'Triple', 'Home Run', 
+  'Error', 'Groundout', 'Flyout', 'Lineout'];
+var descriptionColors = d3.scale.category10().domain(hitDescription);
+var hitType = ['H', 'O', 'E'];
+var typeColors = d3.scale.category10().domain(hitType);
 
+// The x, y coord are given to us on a 250 x 250 scale
+// so we need to translate it to appropriate coords
+// given the scale of the our baseball svg where feet
+// are measured in pixels.
+var xscale = d3.scale.linear()
+  .domain([0, 250])
+  .range([0, 600]);
+var yscale = d3.scale.linear()
+  .domain([0, 250])
+  .range([0, 600]);
+
+var originalData;
+var data;
+  
 /**
  *  @param {string} filepath
  *  @param {function} cb
@@ -26,8 +41,8 @@ function load(filepath, cb) {
     return {
       pitcher: d.pitcher,
       hitter: d.hitter,
+      description: d.description,
       type: d.type,
-      hit: d.hit,
       x: d.x,
       y: d.y
     };
@@ -47,59 +62,39 @@ function load(filepath, cb) {
 
 function baseball(err, hits) {
   if (err) {
-    throw err;
-  }
-  var data = [];
-  for (var i = 0; i < 100; i++) {
-    hits[i].x = parseFloat(hits[i].x);
-    hits[i].y = parseFloat(hits[i].y);
-    data.push(hits[i]);
+    throw new Error('Problem occured loading the hits data...');
   }
 
-  var classMapping = {
-    'Single': 'single',
-    'Double': 'double',
-    'Triple': 'triple',
-    'Home Run': 'home-run',
-    'Error': 'out'
-  };
-
-  // The x, y coord are given to us on a 250 x 250 scale
-  // so we need to translate it to appropriate coords
-  // given the scale of the our baseball svg where feet
-  // are measured in pixels.
-  var xscale = d3.scale.linear()
-    .domain([0, 250])
-    .range([0, 600]);
-  var yscale = d3.scale.linear()
-    .domain([0, 250])
-    .range([0, 600]);
+  data = parseData(hits);
+  originalData = parseData(hits);
   console.log(data);
+  // Initialize the event handlers
+  init();
+}
 
-  svg.selectAll('circle')
-    .data(data)
-    .enter()
-    .append('circle')
-    .attr('class', function(d) {
-      return classMapping[d.type];
+/**
+ * @param {object}  data
+ *
+ * Draw the legend
+ */
+
+function drawlegend() {
+  svg.selectAll('.legend')
+    .data(hitTypes).enter().append('text')
+    .attr('class', 'legend-text')
+    .attr('dy', function(d, i) {
+      return 20 + i * 10;
     })
-    .attr('cx', function(d) {
-      return xscale(d.x);
-    })
-    .attr('cy', function(d) {
-      return yscale(d.y);
-    })
-    .attr('r', function(d) {
-      return 3;
+    .text(function(d, i) { 
+      return d; 
     });
-  console.log('Done drawing');
 }
 
 /**
  *  Draw the baseball field
  */
 
-function drawfield(svg) {
+function drawfield() {
   var toMound = 60.0;
   var betweenBases = 90.0;
   var moundToBase = 127.28 / 2;
@@ -182,6 +177,126 @@ function drawfield(svg) {
 
 }
 
-  drawfield(svg);
-  load('data/hits.tsv', baseball);
+/**
+ * Draw the hits 
+ */
+
+function drawhits(disp) {
+  var circles = svg.selectAll('circle').data(data);
+
+  circles.transition()
+    .attr('cx', function(d) {
+      return xscale(d.x);
+    })
+    .attr('cy', function(d) {
+      return xscale(d.y);
+    });
+
+  circles.enter()
+    .append('svg:circle')
+    .attr('class', 'hit')
+    .attr('fill', function(d) {
+      return disp(d);
+    })
+    .attr('cx', function(d) {
+      return xscale(d.x);
+    })
+    .attr('cy', function(d) {
+      return yscale(d.y);
+    })
+    .attr('r', function(d) {
+      return 4.0;
+    })
+    .on('click', function(d) {
+      d3.select('.info').text('Description: ' + d.description + ' Type: ' + d.type); 
+    });
+
+  circles.exit().remove();
+}
+
+
+/**
+ * Initialize the event handlers
+ */
+
+function init() {
+  drawhits(displayer('description'));
+  // d3.select('.hit-options select')
+  //   .on('change', function() {
+  //     var temp = [];
+  //     for (var i = 0; i < data.length; i++) {
+  //       temp.push(data[i]);
+  //     }
+  //     data = [];
+  //     for (var i = 0; i < temp.length; i++) {
+  //       data.push(temp[i]);
+  //     }
+  //     drawhits(displayer(this.value));
+  //   });
+
+  d3.select('.player-options input[name="pitcher"]')
+  .on('change', function() {
+    var pitcher = this.value;
+    for (var i = 0; i < originalData.length; i++) {
+      var d = originalData[i];
+      if (pitcher === d.pitcher) {
+        data.push(d);
+      }
+    }
+    drawhits(displayer('type'));
+  })
+  d3.select('.player-options input[name="hitter"]')
+  .on('change', function() {
+    var hitter = this.value;
+    data = [];
+    for (var i = 0; i < originalData.length; i++) {
+      var d = originalData[i];
+      if (hitter === d.hitter) {
+        data.push(d);
+      }
+    }
+    drawhits(displayer('type'));
+    console.log(data);
+  })
+
+}
+
+/**
+ * @param {array} hits
+ */
+
+function parseData(hits) {
+  var data = [];
+  for (var i = 0; i < hits.length; i++) {
+    hits[i].x = parseFloat(hits[i].x);
+    hits[i].y = parseFloat(hits[i].y);
+    data.push(hits[i]);
+  }
+  return data;
+}
+
+/**
+ * @param {string} displayOption
+ *
+ * Returns a function which display hits
+ * on the field, based on the option based
+ */
+function displayer(option) {
+  if (option === 'description') {
+    return function(d) {
+      return descriptionColors(d.description);
+    }
+  } else {
+    return function(d) {
+      return typeColors(d.type);
+    }
+  }
+}
+
+function resetData() {
+}
+
+  drawfield();
+  // drawlegend({});
+  load('data/newhits.tsv', baseball);
 })(d3, $);
