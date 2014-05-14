@@ -37,9 +37,10 @@ function load(filepath, cb) {
       pitcher: d.pitcher,
       hitter: d.hitter,
       description: d.description,
-      type: d.type,
+      class: d.class,
       x: d.x,
-      y: d.y
+      y: d.y,
+      id: d.id
     };
   })
   .get(function(err, rows) {
@@ -210,7 +211,7 @@ function drawhits(fn) {
   fn = fn || function(d) { return true; }
 
   // if the key is the index, everything gets messed up
-  var keyFn = function(d, i) { return d.x; }
+  var keyFn = function(d, i) { return d.id; }
 
   var colorMapping = {
     'H': 'hit',
@@ -222,7 +223,7 @@ function drawhits(fn) {
   circles.enter()
     .append('svg:circle')
     .attr('class', function(d) {
-      return colorMapping[d.type];
+      return colorMapping[d.class];
     })
     .attr('cx', function(d) {
       return xscale(d.x);
@@ -235,7 +236,7 @@ function drawhits(fn) {
     })
     .on('click', function(d) {
       d3.select('.info').text('Description: ' + d.description 
-                              + ' Type: ' + d.type
+                              + ' Type: ' + d.class
                               + ' X: ' + d.x
                               + ' Y: ' + d.y); 
     });
