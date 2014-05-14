@@ -7,11 +7,6 @@ var home = {
   x: 300,
   y: 500
 };
-var hitDescription = ['Single', 'Double', 'Triple', 'Home Run', 
-  'Error', 'Groundout', 'Flyout', 'Lineout'];
-var descriptionColors = d3.scale.category10().domain(hitDescription);
-var hitType = ['H', 'O', 'E'];
-var typeColors = d3.scale.category10().domain(hitType);
 
 // The x, y coord are given to us on a 250 x 250 scale
 // so we need to translate it to appropriate coords
@@ -67,7 +62,6 @@ function baseball(err, hits) {
 
   data = parseData(hits);
   originalData = parseData(hits);
-  console.log(data);
   // Initialize the event handlers
   init();
 }
@@ -178,11 +172,22 @@ function drawfield() {
 }
 
 /**
- * Draw the hits 
+ * Draw the hits. 
+ *
+ * @param {function} fn The filtering function
  */
 
-function drawhits(disp) {
-  var circles = svg.selectAll('circle').data(data);
+function drawhits(fn) {
+  fn = fn || function(d) {
+    return true;
+  }
+
+  var colorMapping = {
+    'H': 'hit',
+    'O': 'out',
+    'E': 'error'
+  };
+  var circles = svg.selectAll('circle').data(data.filter(fn));
 
   circles.transition()
     .attr('cx', function(d) {
@@ -194,9 +199,8 @@ function drawhits(disp) {
 
   circles.enter()
     .append('svg:circle')
-    .attr('class', 'hit')
-    .attr('fill', function(d) {
-      return disp(d);
+    .attr('class', function(d) {
+      return colorMapping[d.type];
     })
     .attr('cx', function(d) {
       return xscale(d.x);
@@ -220,45 +224,34 @@ function drawhits(disp) {
  */
 
 function init() {
-  drawhits(displayer('description'));
-  // d3.select('.hit-options select')
-  //   .on('change', function() {
-  //     var temp = [];
-  //     for (var i = 0; i < data.length; i++) {
-  //       temp.push(data[i]);
-  //     }
-  //     data = [];
-  //     for (var i = 0; i < temp.length; i++) {
-  //       data.push(temp[i]);
-  //     }
-  //     drawhits(displayer(this.value));
-  //   });
+  drawhits();
 
-  d3.select('.player-options input[name="pitcher"]')
+  // Pitcher
+  d3.selectAll('.player-options input')
   .on('change', function() {
-    var pitcher = this.value;
-    for (var i = 0; i < originalData.length; i++) {
-      var d = originalData[i];
-      if (pitcher === d.pitcher) {
-        data.push(d);
-      }
-    }
-    drawhits(displayer('type'));
-  })
-  d3.select('.player-options input[name="hitter"]')
-  .on('change', function() {
-    var hitter = this.value;
-    data = [];
-    for (var i = 0; i < originalData.length; i++) {
-      var d = originalData[i];
-      if (hitter === d.hitter) {
-        data.push(d);
-      }
-    }
-    drawhits(displayer('type'));
-    console.log(data);
-  })
+    var pitcher = $('.player-options input[name="pitcher"]').val();
+    var hitter = $('.player-options input[name="hitter"]').val();
 
+    // filtering function
+    var fn = function(pitcher, hitter) {
+      if (hitter && pitcher) {
+        return function(d) {
+          return d.pitcher === pitcher && d.hitter === hitter;
+        }
+      } else if (hitter) {
+        return function(d) {
+          return d.hitter === hitter;
+        }
+      } else if (pitcher) {
+        return function(d) {
+          return d.pitcher === pitcher;
+        }
+      }
+    }(pitcher, hitter)
+
+    // refresh
+    drawhits(fn);
+  })
 }
 
 /**
@@ -273,27 +266,6 @@ function parseData(hits) {
     data.push(hits[i]);
   }
   return data;
-}
-
-/**
- * @param {string} displayOption
- *
- * Returns a function which display hits
- * on the field, based on the option based
- */
-function displayer(option) {
-  if (option === 'description') {
-    return function(d) {
-      return descriptionColors(d.description);
-    }
-  } else {
-    return function(d) {
-      return typeColors(d.type);
-    }
-  }
-}
-
-function resetData() {
 }
 
   drawfield();

@@ -1,22 +1,27 @@
+/* css for the field */
 path {
-  stroke: lightgrey;
+  stroke: black;
   stroke-width: 1;
   fill: none;
 }
 
 .hit {
+  fill: lightskyblue;
   stroke: black;
 }
 
-.legend-text {
-  font-size: 10px;  
+.out {
+  fill: black;
+  stroke: black;
+}
+
+.error {
+  fill: darkred;
+  stroke: black;
 }
 
 .player-options input {
 }
 
-.hit-options {
-  
-}
 
 
