@@ -1,4 +1,41 @@
-/* css for the field */
+body {
+  font-family: Georgia,sans-serif;
+  font-size: 16px;
+}
+
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 800px;
+  text-align: center;
+}
+
+.description {
+  margin-top: 10px;
+  margin-bottom: 100px;
+}
+
+.description p {
+  font-size: 1.2em;
+}
+
+.description h1 {
+  font-size: 3em;
+  padding-bottom: 10px;
+}
+
+.options .player-options {
+  padding-bottom: 40px;
+}
+
+.viz .info {
+  margin: 10px;
+}
+
+.viz svg {
+  background-color: #eee;
+}
+
 path {
   stroke: black;
   stroke-width: 1;
@@ -8,20 +45,29 @@ path {
 .hit {
   fill: lightskyblue;
   stroke: black;
+  opacity: 0.7;
 }
 
 .out {
   fill: black;
   stroke: black;
+  opacity: 0.7;
 }
 
 .error {
   fill: darkred;
   stroke: black;
+  opacity: 0.7;
 }
 
 .player-options input {
 }
 
+.footer {
+  height: 100px;
+}
 
+svg:not(:root) {
+  overflow: hidden;
+}
 

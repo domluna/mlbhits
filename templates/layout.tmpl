@@ -2,23 +2,42 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title> D3 Baseball </title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link href="css/main.css" rel="stylesheet">
   </head>
   <body>
-    <h2> Baseball Hits </h2>
-    <p class="info"></p>
-    <svg width="600" height="600"></svg>
-    <div class="options">
-        <div class="player-options">
-            Pitcher: <input name="pitcher"></input>
-            Hitter: <input name="hitter"></input>
+    <div class="description">
+        <div class="container">
+            <h1> 2014 MLB Hits Visualization </h1>
+            <p> A visualization of baseball hits throughout the 2014 MLB Season. 
+            Hits are displayed as "Hits", "Outs" and "Errors".
+            Hits maybe be navigated via hitter and pitcher combinations. For example
+            putting "Jose Bautista" in the hitter's box (pun intended), will display all
+            hits from "Jose Bautista".</p>
+            <p>The current dataset is up to date of as early May. </p>
         </div>
-        <div class="hit-options">
-            <select>
-                <option value="description">By Description</option>
-                <option value="type">By Type</option>
-            </select>
+    </div>
+    <div class="options">
+        <div class="container">
+            <div class="player-options">
+                Pitcher: <input name="pitcher"></input>
+                Hitter: <input name="hitter"></input>
+            </div>
+        </div>
+    </div>
+
+    <div class="viz">
+        <div class="container">
+            <div class="info"></div>
+            <svg width="600" height="600"></svg>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
         </div>
     </div>
 

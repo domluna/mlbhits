@@ -55,15 +55,44 @@ function load(filepath, cb) {
  */
 
 
-function baseball(err, hits) {
+function init(err, hits) {
   if (err) {
     throw new Error('Problem occured loading the hits data...');
+    return;
   }
+
+  console.log('Dataset Loaded ... ');
 
   data = parseData(hits);
   originalData = parseData(hits);
-  // Initialize the event handlers
-  init();
+
+  // drawhits();
+  // Pitcher
+  d3.selectAll('.player-options input')
+  .on('change', function() {
+    var pitcher = $('.player-options input[name="pitcher"]').val();
+    var hitter = $('.player-options input[name="hitter"]').val();
+
+    // filtering function
+    var fn = function(pitcher, hitter) {
+      if (hitter && pitcher) {
+        return function(d) {
+          return d.pitcher === pitcher && d.hitter === hitter;
+        }
+      } else if (hitter) {
+        return function(d) {
+          return d.hitter === hitter;
+        }
+      } else if (pitcher) {
+        return function(d) {
+          return d.pitcher === pitcher;
+        }
+      }
+    }(pitcher, hitter)
+
+    // refresh
+    drawhits(fn);
+  })
 }
 
 /**
@@ -178,24 +207,17 @@ function drawfield() {
  */
 
 function drawhits(fn) {
-  fn = fn || function(d) {
-    return true;
-  }
+  fn = fn || function(d) { return true; }
+
+  // if the key is the index, everything gets messed up
+  var keyFn = function(d, i) { return d.x; }
 
   var colorMapping = {
     'H': 'hit',
     'O': 'out',
     'E': 'error'
   };
-  var circles = svg.selectAll('circle').data(data.filter(fn));
-
-  circles.transition()
-    .attr('cx', function(d) {
-      return xscale(d.x);
-    })
-    .attr('cy', function(d) {
-      return xscale(d.y);
-    });
+  var circles = svg.selectAll('circle').data(data.filter(fn), keyFn);
 
   circles.enter()
     .append('svg:circle')
@@ -212,46 +234,21 @@ function drawhits(fn) {
       return 4.0;
     })
     .on('click', function(d) {
-      d3.select('.info').text('Description: ' + d.description + ' Type: ' + d.type); 
+      d3.select('.info').text('Description: ' + d.description 
+                              + ' Type: ' + d.type
+                              + ' X: ' + d.x
+                              + ' Y: ' + d.y); 
+    });
+
+  circles.transition()
+    .attr('cx', function(d) {
+      return xscale(d.x);
+    })
+    .attr('cy', function(d) {
+      return xscale(d.y);
     });
 
   circles.exit().remove();
-}
-
-
-/**
- * Initialize the event handlers
- */
-
-function init() {
-  drawhits();
-
-  // Pitcher
-  d3.selectAll('.player-options input')
-  .on('change', function() {
-    var pitcher = $('.player-options input[name="pitcher"]').val();
-    var hitter = $('.player-options input[name="hitter"]').val();
-
-    // filtering function
-    var fn = function(pitcher, hitter) {
-      if (hitter && pitcher) {
-        return function(d) {
-          return d.pitcher === pitcher && d.hitter === hitter;
-        }
-      } else if (hitter) {
-        return function(d) {
-          return d.hitter === hitter;
-        }
-      } else if (pitcher) {
-        return function(d) {
-          return d.pitcher === pitcher;
-        }
-      }
-    }(pitcher, hitter)
-
-    // refresh
-    drawhits(fn);
-  })
 }
 
 /**
@@ -270,5 +267,5 @@ function parseData(hits) {
 
   drawfield();
   // drawlegend({});
-  load('data/newhits.tsv', baseball);
+  load('data/newhits.tsv', init);
 })(d3, $);

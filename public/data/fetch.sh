@@ -6,7 +6,7 @@ for current_date in $(./drange.py)
     for i in $(mlb games --date "${current_date}" | cut -f 1)
       do
         echo "    Scraping game #${i}..."
-        # mlb game --date "$current_date" --pitches "${i}" >> pitches.tsv
-        mlb game --date yesterday --hits "${i}" >> hits.tsv
+        mlb game --date "$current_date" --pitches "${i}" >> pitches.tsv
+        mlb game --date "$current_date" --hits "${i}" >> hits.tsv
       done
   done
