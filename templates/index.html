@@ -6,32 +6,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title> D3 Baseball </title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link href='http://fonts.googleapis.com/css?family=PT+Serif' rel='stylesheet' type='text/css'>
     <link href="css/main.css" rel="stylesheet">
   </head>
   <body>
     <div class="description">
         <div class="container">
-            <h1> 2014 MLB Hits Visualization </h1>
+            <h1> 2014 MLB Hits </h1>
             <p> A visualization of baseball hits throughout the 2014 MLB Season. 
             Hits are displayed as "Hits", "Outs" and "Errors".
             Hits maybe be navigated via hitter and pitcher combinations. For example
             putting "Jose Bautista" in the hitter's box (pun intended), will display all
             hits from "Jose Bautista".</p>
-            <p>The current dataset is up to date of as early May. </p>
+            <p> Since the MLB has 30 unique ballparks the dimensions of
+            the drawn park will not be perfect representation of the ballpark which
+            the pitch was hit. The drawn ballpark aims to be a generic size.</p>
+            <p> Click on the hits to see more information about the hit </p>
+            <p> The current dataset is up to date of as early May. </p>
         </div>
     </div>
     <div class="options">
         <div class="container">
             <div class="player-options">
-                Pitcher: <input name="pitcher"></input>
-                Hitter: <input name="hitter"></input>
+                <label> Pitcher: </label>
+                <input name="pitcher" placeholder="Enter a Pitcher name" list="pitchers">
+                <datalist id="pitchers"></datalist>
+                <label> Hitter: </label>
+                <input name="hitter" placeholder="Enter a Hitter name" list="hitters">
+                <datalist id="hitters"></datalist>
             </div>
+            <div class="info"></div>
         </div>
     </div>
 
     <div class="viz">
         <div class="container">
-            <div class="info"></div>
             <svg width="600" height="600"></svg>
         </div>
     </div>
@@ -44,6 +53,7 @@
     <!-- Load the scripts -->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="js/d3.legend.js"></script>
     <script src="js/baseball.js"></script>
   </body>
 </html>

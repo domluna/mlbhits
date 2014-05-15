@@ -1,25 +1,25 @@
 body {
-  font-family: Georgia,sans-serif;
+  font-family: "PT Serif",sans-serif;
   font-size: 16px;
 }
 
+
 .container {
-  margin-right: auto;
-  margin-left: auto;
-  max-width: 800px;
-  text-align: center;
+  margin: 1em auto 1em auto;
+  max-width: 650px;
+  /* text-align: center; */
 }
 
 .description {
   margin-top: 10px;
-  margin-bottom: 100px;
+  margin-bottom: 10px;
 }
 
 .description p {
-  font-size: 1.2em;
+  line-height: 1.5em;
 }
 
-.description h1 {
+h1 {
   font-size: 3em;
   padding-bottom: 10px;
 }
@@ -28,13 +28,31 @@ body {
   padding-bottom: 40px;
 }
 
-.viz .info {
+.options input {
   margin: 10px;
+}
+
+.options .info {
+  font-size 1.2em;
+  text-align: center;
 }
 
 .viz svg {
   background-color: #eee;
 }
+
+.player-options input {
+}
+
+.footer {
+  height: 100px;
+}
+
+/**
+ * 
+ * Visualization specific 
+ *
+ */
 
 path {
   stroke: black;
@@ -43,28 +61,28 @@ path {
 }
 
 .hit {
-  fill: lightskyblue;
+  fill: green;
   stroke: black;
-  opacity: 0.7;
+  opacity: 0.5;
 }
 
 .out {
   fill: black;
   stroke: black;
-  opacity: 0.7;
+  opacity: 0.5;
 }
 
 .error {
   fill: darkred;
   stroke: black;
-  opacity: 0.7;
+  opacity: 0.5;
 }
 
-.player-options input {
-}
-
-.footer {
-  height: 100px;
+.legend rect {
+  fill: white;
+  stroke: black;
+  opacity: 0.8;
+  font-size: 12px;
 }
 
 svg:not(:root) {

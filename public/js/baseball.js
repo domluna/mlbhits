@@ -19,7 +19,6 @@ var yscale = d3.scale.linear()
   .domain([0, 250])
   .range([0, 600]);
 
-var originalData;
 var data;
   
 /**
@@ -65,10 +64,27 @@ function init(err, hits) {
   console.log('Dataset Loaded ... ');
 
   data = parseData(hits);
-  originalData = parseData(hits);
 
-  // drawhits();
-  // Pitcher
+
+  var hitters = {};
+  var pitchers = {};
+  // fill autocomplete lists
+  var pitcherList = d3.select('datalist#pitchers')
+  var hitterList = d3.select('datalist#hitters')
+  for (var i = 0; i < data.length; i++) {
+    var d = data[i];
+    if (!pitchers[d.pitcher]) {
+      pitchers[d.pitcher] = true
+      pitcherList.append('option').attr('value', d.pitcher);
+    }
+
+    if (!hitters[d.hitter]) {
+      hitters[d.hitter] = true
+      hitterList.append('option').attr('value', d.hitter);
+    }
+  }
+
+  // Initialize input fields
   d3.selectAll('.player-options input')
   .on('change', function() {
     var pitcher = $('.player-options input[name="pitcher"]').val();
@@ -93,25 +109,8 @@ function init(err, hits) {
 
     // refresh
     drawhits(fn);
+    legend();
   })
-}
-
-/**
- * @param {object}  data
- *
- * Draw the legend
- */
-
-function drawlegend() {
-  svg.selectAll('.legend')
-    .data(hitTypes).enter().append('text')
-    .attr('class', 'legend-text')
-    .attr('dy', function(d, i) {
-      return 20 + i * 10;
-    })
-    .text(function(d, i) { 
-      return d; 
-    });
 }
 
 /**
@@ -199,6 +198,43 @@ function drawfield() {
     .attr('transform', 'translate(' + home.x + ',' + home.y + 
           ')rotate(-45)');
 
+  // third base length
+  svg.append('svg:text')
+    .attr('transform', 'translate(' + (home.x - moundToBase - 15) + ',' + (home.y +
+          - toMound - 4) + ')rotate(45)')
+    .attr('font-size', '14')
+    .attr('dy', '0.35em')
+    .text(function(d) { return '90 feet' });
+
+  // center field
+  svg.append('svg:text')
+    .attr('transform', 'translate(' + (home.x - 15) + ',' + (home.y +
+          - distToCenter - 15) + ')rotate(0)')
+    .attr('font-size', '14')
+    .attr('dy', '0.35em')
+    .text(function(d) { return Math.round(distToCenter)  + ' feet' });
+
+}
+
+/**
+ * Draw the legend. 
+ * 
+ * Mapping between hit classification and 
+ * display color.
+ * 
+ */
+
+function drawlegend() {
+  var called = false;
+  return function() {
+    // if (called) { return; }
+    console.log('Legend drawn ... ');
+    called = true;
+    svg.append('g')
+      .attr('class', 'legend')
+      .attr('transform', 'translate(30, 30)')
+      .call(d3.legend);
+  }
 }
 
 /**
@@ -232,13 +268,18 @@ function drawhits(fn) {
       return yscale(d.y);
     })
     .attr('r', function(d) {
-      return 4.0;
+      return 5.0;
+    })
+    .attr('data-legend', function(d) {
+      return colorMapping[d.class];
     })
     .on('click', function(d) {
       d3.select('.info').text('Description: ' + d.description 
-                              + ' Type: ' + d.class
                               + ' X: ' + d.x
                               + ' Y: ' + d.y); 
+    })
+    .on('dblclick', function(d) {
+      d3.select('.info').text('This hit was a : ' + d.description) 
     });
 
   circles.transition()
@@ -266,7 +307,8 @@ function parseData(hits) {
   return data;
 }
 
+  // Start it up
+  var legend = drawlegend();
   drawfield();
-  // drawlegend({});
   load('data/newhits.tsv', init);
 })(d3, $);

@@ -1,0 +1,10 @@
+{
+  "author": "Dominique Luna",
+  "dependencies": {
+    "ejs": "^1.0.0",
+    "express": "^4.2.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
