@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# Returns a list of datetimes ranging from yesterday's
+# date back to 2014-03-30 or if passed a first argument
+# back to the first argument
+
 import sys
 import datetime
 
