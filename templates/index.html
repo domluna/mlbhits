@@ -7,6 +7,7 @@
     <title> D3 Baseball </title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link href='http://fonts.googleapis.com/css?family=PT+Serif' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
     <link href="css/main.css" rel="stylesheet">
   </head>
   <body>
@@ -21,7 +22,7 @@
             <p> Since the MLB has 30 unique ballparks the dimensions of
             the drawn park will not be perfect representation of the ballpark which
             the pitch was hit. The drawn ballpark aims to be a generic size.</p>
-            <p> Click on the hits to see more information about the hit </p>
+            <p> Click on the hits to see more information about the hit. </p>
             <p> The current dataset is up to date of as early May. </p>
         </div>
     </div>
@@ -29,11 +30,9 @@
         <div class="container">
             <div class="player-options">
                 <label> Pitcher: </label>
-                <input name="pitcher" placeholder="Enter a Pitcher name" list="pitchers">
-                <datalist id="pitchers"></datalist>
+                <input name="pitcher" id="pitchers" placeholder="Enter a Pitcher name" list="pitchers">
                 <label> Hitter: </label>
-                <input name="hitter" placeholder="Enter a Hitter name" list="hitters">
-                <datalist id="hitters"></datalist>
+                <input name="hitter" id="hitters" placeholder="Enter a Hitter name" list="hitters">
             </div>
             <div class="info"></div>
         </div>
@@ -53,6 +52,7 @@
     <!-- Load the scripts -->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script src="js/d3.legend.js"></script>
     <script src="js/baseball.js"></script>
   </body>

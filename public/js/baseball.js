@@ -2,7 +2,8 @@
 
 var svg = d3.select('svg');
 
-// baseball field
+// Baseball field home plate
+// location
 var home = {
   x: 300,
   y: 500
@@ -22,11 +23,11 @@ var yscale = d3.scale.linear()
 var data;
   
 /**
- *  @param {string} filepath
- *  @param {function} cb
- *
  *  Loads the baseball data from the filepath then
  *  calls the passed callback.
+ *
+ *  @param {string} filepath
+ *  @param {function} cb
  */
 
 function load(filepath, cb) {
@@ -75,42 +76,51 @@ function init(err, hits) {
     var d = data[i];
     if (!pitchers[d.pitcher]) {
       pitchers[d.pitcher] = true
-      pitcherList.append('option').attr('value', d.pitcher);
     }
 
     if (!hitters[d.hitter]) {
       hitters[d.hitter] = true
-      hitterList.append('option').attr('value', d.hitter);
     }
   }
 
-  // Initialize input fields
-  d3.selectAll('.player-options input')
-  .on('change', function() {
-    var pitcher = $('.player-options input[name="pitcher"]').val();
-    var hitter = $('.player-options input[name="hitter"]').val();
+  $('#hitters').autocomplete({
+    source: Object.keys(hitters)
+  })
 
-    // filtering function
-    var fn = function(pitcher, hitter) {
-      if (hitter && pitcher) {
-        return function(d) {
-          return d.pitcher === pitcher && d.hitter === hitter;
+  $('#pitchers').autocomplete({
+    source: Object.keys(pitchers)
+  })
+
+
+  // Initialize input fields
+  $('input')
+    .on('autocompletechange', function() {
+      console.log('New player ... ');
+      var pitcher = $('#pitchers').val();
+      var hitter = $('#hitters').val();
+
+      // filtering function
+      var fn = function(pitcher, hitter) {
+        if (hitter && pitcher) {
+          return function(d) {
+            return d.pitcher === pitcher && d.hitter === hitter;
+          }
+        } else if (hitter) {
+          return function(d) {
+            return d.hitter === hitter;
+          }
+        } else if (pitcher) {
+          return function(d) {
+            return d.pitcher === pitcher;
+          }
         }
-      } else if (hitter) {
-        return function(d) {
-          return d.hitter === hitter;
-        }
-      } else if (pitcher) {
-        return function(d) {
-          return d.pitcher === pitcher;
-        }
-      }
-    }(pitcher, hitter)
+      }(pitcher, hitter)
 
     // refresh
     drawhits(fn);
     legend();
   })
+
 }
 
 /**
@@ -227,7 +237,7 @@ function drawfield() {
 function drawlegend() {
   var called = false;
   return function() {
-    // if (called) { return; }
+    if (called) { return; }
     console.log('Legend drawn ... ');
     called = true;
     svg.append('g')
@@ -294,7 +304,11 @@ function drawhits(fn) {
 }
 
 /**
+ * Converts x,y co-ords from string
+ * to numbers
+ *
  * @param {array} hits
+ * @return {array}
  */
 
 function parseData(hits) {
@@ -311,4 +325,4 @@ function parseData(hits) {
   var legend = drawlegend();
   drawfield();
   load('data/newhits.tsv', init);
-})(d3, $);
+})(d3, jQuery);
