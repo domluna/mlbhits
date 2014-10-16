@@ -54,8 +54,6 @@ function load(filepath, cb) {
 /**
  *  Stuff with baseball data
  */
-
-
 function init(err, hits) {
   if (err) {
     throw new Error('Problem occured loading the hits data...');
@@ -65,7 +63,6 @@ function init(err, hits) {
   console.log('Dataset Loaded ... ');
 
   data = parseData(hits);
-
 
   var hitters = {};
   var pitchers = {};
@@ -103,7 +100,7 @@ function init(err, hits) {
       var fn = function(pitcher, hitter) {
         if (hitter && pitcher) {
           return function(d) {
-            return d.pitcher === pitcher && d.hitter === hitter;
+            return (d.pitcher === pitcher && d.hitter === hitter);
           }
         } else if (hitter) {
           return function(d) {
@@ -118,7 +115,6 @@ function init(err, hits) {
 
     // refresh
     drawhits(fn);
-    legend();
   })
 
 }
@@ -235,16 +231,20 @@ function drawfield() {
  */
 
 function drawlegend() {
-  var called = false;
-  return function() {
-    if (called) { return; }
-    console.log('Legend drawn ... ');
-    called = true;
-    svg.append('g')
-      .attr('class', 'legend')
-      .attr('transform', 'translate(30, 30)')
-      .call(d3.legend);
-  }
+  svg.selectAll('.legend')
+    .data()
+    .enter()
+    .append('g')
+    .attr('class', 'legend')
+    .attr('transform', function(d, i) {
+      return 'translate(30, 30)';
+    });
+
+  legend.append('rect')
+    .attr('width', 10)
+    .attr('height', 10)
+    .style('fill', 'black')
+    .style('stroke', 'black');
 }
 
 /**
@@ -264,7 +264,9 @@ function drawhits(fn) {
     'O': 'out',
     'E': 'error'
   };
+
   var circles = svg.selectAll('circle').data(data.filter(fn), keyFn);
+  console.log(circles);
 
   circles.enter()
     .append('svg:circle')
@@ -283,13 +285,10 @@ function drawhits(fn) {
     .attr('data-legend', function(d) {
       return colorMapping[d.class];
     })
-    .on('click', function(d) {
+    .on('mouseover', function(d) {
       d3.select('.info').text('Description: ' + d.description 
                               + ' X: ' + d.x
                               + ' Y: ' + d.y); 
-    })
-    .on('dblclick', function(d) {
-      d3.select('.info').text('This hit was a : ' + d.description) 
     });
 
   circles.transition()
@@ -322,7 +321,7 @@ function parseData(hits) {
 }
 
   // Start it up
-  var legend = drawlegend();
+  // drawlegend();
   drawfield();
   load('data/newhits.tsv', init);
-})(d3, jQuery);
+})(d3, jQuery)
