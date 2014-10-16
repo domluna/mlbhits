@@ -14,7 +14,8 @@ app.route('/*')
   res.render('index', {});
 })
 
-var port = 3000 || process.env.PORT;
+app.set('port', (process.env.PORT || 3000))
 
-console.log('Listening on port', port);
-app.listen(port);
+app.listen(app.get('port'), function() {
+  console.log('Node app is running at localhost:' + app.get('port'))
+})
